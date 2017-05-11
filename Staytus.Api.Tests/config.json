@@ -1,0 +1,33 @@
+﻿{
+  "staytusApi": {
+    "url": "https://mystatusdomain.com/api/v1",
+    "token": "",
+    "secret": "",
+
+    "tests": {
+      "services": {
+        "--comment_findByPermalink": "pre-defined service to use in lookup calls",
+        "findByPermalink": "",
+
+        "--comment_newStatusPermalink": "set a service to this pre-defined status",
+        "newStatusPermalink": ""
+      },
+      "issues": {
+        "--comment_servicePermalinks": "array of services to insert an issue with",
+        "servicePermalinks": [
+        ],
+
+        "--comment_statusPermalink": "status to use in issue",
+        "statusPermalink": "",
+
+        "--comment_resolvedNormalStatusPermalink": "the 'normal' status for services used after an issue is resolved",
+        "resolvedNormalStatusPermalink": ""
+      },
+
+      "subscribers": {
+        "findByEmail": "",
+        "findByVerification": ""
+      }
+    }
+  }
+}
