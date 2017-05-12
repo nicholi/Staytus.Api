@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Staytus.Api.Models;
 
 namespace Staytus.Api.Extensions
 {
@@ -39,6 +40,11 @@ namespace Staytus.Api.Extensions
             }
 
             return String.Join("&", items);
+        }
+
+        public static bool IsOk<TData>(this StaytusResponseModel<TData> responseModel)
+        {
+            return responseModel.Status == SystemMessages.SUCCESS;
         }
     }
 }

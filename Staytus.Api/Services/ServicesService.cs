@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Staytus.Api.Models;
 
@@ -9,22 +10,27 @@ namespace Staytus.Api
     {
         protected const String SERVICES_SERVICE = "services";
 
-        public Task<StaytusResponseModel<List<ServiceModel>>> ListServices()
+        public Task<StaytusResponseModel<List<ServiceModel>>> ListServicesAsync(CancellationToken cancelToken = default(CancellationToken))
         {
             return InternalPostAsync<Object, List<ServiceModel>>(GetServiceMethodPath(SERVICES_SERVICE, "all"),
-                EMPTY_DATA);
+                EMPTY_DATA,
+                cancelToken: cancelToken);
         }
 
-        public Task<StaytusResponseModel<ServiceModel>> GetService(String servicePermalink)
+        public Task<StaytusResponseModel<ServiceModel>> GetServiceAsync(String servicePermalink,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             return InternalPostAsync<Object, ServiceModel>(GetServiceMethodPath(SERVICES_SERVICE, "info"),
-                new { service = servicePermalink });
+                new { service = servicePermalink },
+                cancelToken: cancelToken);
         }
 
-        public Task<StaytusResponseModel<ServiceModel>> SetServiceStatus(String servicePermalink, String statusPermalink)
+        public Task<StaytusResponseModel<ServiceModel>> SetServiceStatusAsync(String servicePermalink, String statusPermalink,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             return InternalPostAsync<Object, ServiceModel>(GetServiceMethodPath(SERVICES_SERVICE, "set_status"),
-                new { service = servicePermalink, status = statusPermalink });
+                new { service = servicePermalink, status = statusPermalink },
+                cancelToken: cancelToken);
         }
     }
 }

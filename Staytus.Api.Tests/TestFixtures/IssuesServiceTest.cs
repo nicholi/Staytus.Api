@@ -79,7 +79,7 @@ namespace Staytus.Api.Tests.TestFixtures
 
             if (assertInitialStatus)
             {
-                var initialServices = await ApiClient.ListServices();
+                var initialServices = await ApiClient.ListServicesAsync();
                 var initialAffectedServices = initialServices.Data.Where(x => servicePermalinks.Contains(x.Permalink)).ToList();
                 foreach (var affectedService in initialAffectedServices)
                 {
@@ -88,12 +88,12 @@ namespace Staytus.Api.Tests.TestFixtures
                 }
             }
 
-            var newIssue = await ApiClient.CreateIssue(title, servicePermalinks, statusPermalink, serviceState, initialText);
+            var newIssue = await ApiClient.CreateIssueAsync(title, servicePermalinks, statusPermalink, serviceState, initialText);
             Assert.That(newIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(newIssue.Data, Is.Not.Null);
             Assert.That(newIssue.Data.Title, Is.EqualTo(title));
 
-            var finalServices = await ApiClient.ListServices();
+            var finalServices = await ApiClient.ListServicesAsync();
             var finalAffectedServices = finalServices.Data.Where(x => servicePermalinks.Contains(x.Permalink)).ToList();
             foreach (var affectedService in finalAffectedServices)
             {
@@ -101,7 +101,7 @@ namespace Staytus.Api.Tests.TestFixtures
                 Assert.That(affectedService.Status.Permalink, Is.EqualTo(statusPermalink));
             }
 
-            var fullIssue = await ApiClient.GetIssue(newIssue.Data.Id);
+            var fullIssue = await ApiClient.GetIssueAsync(newIssue.Data.Id);
             Assert.That(fullIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(fullIssue.Data, Is.Not.Null);
             Assert.That(fullIssue.Data.Updates, Has.Count.EqualTo(1));
@@ -115,18 +115,18 @@ namespace Staytus.Api.Tests.TestFixtures
         [Order(10)]
         public async Task UpdateIssueBareParams(String findIssueByTitle, StaytusState serviceState)
         {
-            var issues = await ApiClient.ListIssues();
+            var issues = await ApiClient.ListIssuesAsync();
             Assert.That(issues.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(issues.Data, Is.Not.Null);
 
             var foundIssue = issues.Data.SingleOrDefault(x => String.Equals(x.Title, findIssueByTitle));
             Assert.That(foundIssue, Is.Not.Null);
 
-            var updateIssue = await ApiClient.UpdateIssue(foundIssue.Id, "Testy test test. " + NextString(10), serviceState);
+            var updateIssue = await ApiClient.UpdateIssueAsync(foundIssue.Id, "Testy test test. " + NextString(10), serviceState);
             Assert.That(updateIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(updateIssue.Data, Is.Not.Null);
 
-            var modifiedIssue = await ApiClient.GetIssue(foundIssue.Id);
+            var modifiedIssue = await ApiClient.GetIssueAsync(foundIssue.Id);
             Assert.That(modifiedIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(modifiedIssue.Data, Is.Not.Null);
             Assert.That(modifiedIssue.Data.Updates, Has.Count.EqualTo(2));
@@ -140,18 +140,18 @@ namespace Staytus.Api.Tests.TestFixtures
             var statusPermalink = Configuration.GetValue<String>("staytusApi:tests:issues:resolvedNormalStatusPermalink", null);
             Assert.That(statusPermalink, Is.Not.Null);
 
-            var issues = await ApiClient.ListIssues();
+            var issues = await ApiClient.ListIssuesAsync();
             Assert.That(issues.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(issues.Data, Is.Not.Null);
 
             var foundIssue = issues.Data.SingleOrDefault(x => String.Equals(x.Title, findIssueByTitle));
             Assert.That(foundIssue, Is.Not.Null);
 
-            var updateIssue = await ApiClient.UpdateIssue(foundIssue.Id, "Resolvy resolve resolve. " + NextString(10), StaytusState.Resolved, statusPermalink);
+            var updateIssue = await ApiClient.UpdateIssueAsync(foundIssue.Id, "Resolvy resolve resolve. " + NextString(10), StaytusState.Resolved, statusPermalink);
             Assert.That(updateIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(updateIssue.Data, Is.Not.Null);
 
-            var modifiedIssue = await ApiClient.GetIssue(foundIssue.Id);
+            var modifiedIssue = await ApiClient.GetIssueAsync(foundIssue.Id);
             Assert.That(modifiedIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(modifiedIssue.Data, Is.Not.Null);
             Assert.That(modifiedIssue.Data.Updates, Has.Count.EqualTo(numUpdates));
@@ -161,7 +161,7 @@ namespace Staytus.Api.Tests.TestFixtures
         [Order(20)]
         public async Task ListIssues(String insertedIssueTitle)
         {
-            var issues = await ApiClient.ListIssues();
+            var issues = await ApiClient.ListIssuesAsync();
             Assert.That(issues.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(issues.Data, Is.Not.Null);
             // definitely should be 1 issue since we added it
@@ -177,7 +177,7 @@ namespace Staytus.Api.Tests.TestFixtures
             var statusPermalink = Configuration.GetValue<String>("staytusApi:tests:issues:resolvedNormalStatusPermalink", null);
             Assert.That(statusPermalink, Is.Not.Null);
 
-            var issues = await ApiClient.ListIssues();
+            var issues = await ApiClient.ListIssuesAsync();
             Assert.That(issues.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(issues.Data, Is.Not.Null);
 
@@ -185,7 +185,7 @@ namespace Staytus.Api.Tests.TestFixtures
             Assert.That(foundIssue, Is.Not.Null);
 
             // now query the issue by ID
-            var getIssue = await ApiClient.GetIssue(foundIssue.Id);
+            var getIssue = await ApiClient.GetIssueAsync(foundIssue.Id);
             Assert.That(getIssue.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(getIssue.Data, Is.Not.Null);
             Assert.That(getIssue.Data.Title, Is.EqualTo(findIssueByTitle));

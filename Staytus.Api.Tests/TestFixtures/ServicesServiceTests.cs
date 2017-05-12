@@ -32,7 +32,7 @@ namespace Staytus.Api.Tests.TestFixtures
         [Order(0)]
         public async Task ListServices()
         {
-            var listServices = await ApiClient.ListServices();
+            var listServices = await ApiClient.ListServicesAsync();
             Assert.That(listServices.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(listServices.Data, Has.Count.Positive);
         }
@@ -44,7 +44,7 @@ namespace Staytus.Api.Tests.TestFixtures
             var servicePermalink = Configuration.GetValue<String>("staytusApi:tests:services:findByPermalink", null);
             Assert.That(servicePermalink, Is.Not.Null);
 
-            var getService = await ApiClient.GetService(servicePermalink);
+            var getService = await ApiClient.GetServiceAsync(servicePermalink);
             Assert.That(getService.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(getService.Data, Is.Not.Null);
             Assert.That(getService.Data.Permalink, Is.EqualTo(servicePermalink));
@@ -59,7 +59,7 @@ namespace Staytus.Api.Tests.TestFixtures
             var newStatusPermalink = Configuration.GetValue<String>("staytusApi:tests:services:newStatusPermalink", null);
             Assert.That(newStatusPermalink, Is.Not.Null);
 
-            var getService = await ApiClient.GetService(servicePermalink);
+            var getService = await ApiClient.GetServiceAsync(servicePermalink);
             Assert.That(getService.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(getService.Data, Is.Not.Null);
             Assert.That(getService.Data.Permalink, Is.EqualTo(servicePermalink));
@@ -67,13 +67,13 @@ namespace Staytus.Api.Tests.TestFixtures
             var origStatus = getService.Data.Status;
             Assert.That(origStatus.Permalink, Is.Not.EqualTo(newStatusPermalink));
 
-            var modifyStatus1 = await ApiClient.SetServiceStatus(servicePermalink, newStatusPermalink);
+            var modifyStatus1 = await ApiClient.SetServiceStatusAsync(servicePermalink, newStatusPermalink);
             Assert.That(modifyStatus1.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(modifyStatus1.Data, Is.Not.Null);
             Assert.That(modifyStatus1.Data.Status.Permalink, Is.EqualTo(newStatusPermalink));
 
             // switch status back
-            var modifyStatus2 = await ApiClient.SetServiceStatus(servicePermalink, origStatus.Permalink);
+            var modifyStatus2 = await ApiClient.SetServiceStatusAsync(servicePermalink, origStatus.Permalink);
             Assert.That(modifyStatus2.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(modifyStatus2.Data, Is.Not.Null);
             Assert.That(modifyStatus2.Data.Status.Permalink, Is.EqualTo(origStatus.Permalink));

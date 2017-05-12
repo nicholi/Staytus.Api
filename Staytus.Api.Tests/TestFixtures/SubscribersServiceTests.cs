@@ -51,7 +51,7 @@ namespace Staytus.Api.Tests.TestFixtures
             var subscriberEmail = Configuration.GetValue<String>("staytusApi:tests:subscribers:findByEmail", null);
             Assert.That(subscriberEmail, Is.Not.Null);
 
-            var subscriber = await ApiClient.GetSubscriberByEmail(subscriberEmail);
+            var subscriber = await ApiClient.GetSubscriberByEmailAsync(subscriberEmail);
             Assert.That(subscriber.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(subscriber.Data, Is.Not.Null);
             Assert.That(subscriber.Data.Email, Is.EqualTo(subscriberEmail));
@@ -64,7 +64,7 @@ namespace Staytus.Api.Tests.TestFixtures
             var subscriberVerification = Configuration.GetValue<String>("staytusApi:tests:subscribers:findByVerification", null);
             Assert.That(subscriberVerification, Is.Not.Null);
 
-            var subscriber = await ApiClient.GetSubscriberByToken(subscriberVerification);
+            var subscriber = await ApiClient.GetSubscriberByTokenAsync(subscriberVerification);
             Assert.That(subscriber.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(subscriber.Data, Is.Not.Null);
             Assert.That(subscriber.Data.VerificationToken, Is.EqualTo(subscriberVerification));
@@ -75,7 +75,7 @@ namespace Staytus.Api.Tests.TestFixtures
         [Order(20)]
         public async Task AddSubscriber(String email, Boolean verified)
         {
-            var subscriber = await ApiClient.AddSubscriber(email, verified);
+            var subscriber = await ApiClient.AddSubscriberAsync(email, verified);
             Assert.That(subscriber.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(subscriber.Data, Is.Not.Null);
             Assert.That(subscriber.Data.Email, Is.EqualTo(email));
@@ -93,17 +93,17 @@ namespace Staytus.Api.Tests.TestFixtures
         [Order(40)]
         public async Task VerifySubscriber(String email)
         {
-            var subscriber = await ApiClient.GetSubscriberByEmail(email);
+            var subscriber = await ApiClient.GetSubscriberByEmailAsync(email);
             Assert.That(subscriber.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(subscriber.Data, Is.Not.Null);
             Assert.That(subscriber.Data.Email, Is.EqualTo(email));
             Assert.That(subscriber.Data.VerifiedAt, Is.Null);
 
-            var verifiedSub = await ApiClient.VerifySubscriber(email);
+            var verifiedSub = await ApiClient.VerifySubscriberAsync(email);
             Assert.That(verifiedSub.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(verifiedSub.Data, Is.True);
 
-            var subscriberAfterVerification = await ApiClient.GetSubscriberByEmail(email);
+            var subscriberAfterVerification = await ApiClient.GetSubscriberByEmailAsync(email);
             Assert.That(subscriberAfterVerification.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(subscriberAfterVerification.Data, Is.Not.Null);
             Assert.That(subscriberAfterVerification.Data.Email, Is.EqualTo(email));
@@ -114,7 +114,7 @@ namespace Staytus.Api.Tests.TestFixtures
         [Order(60)]
         public async Task SendSubscriberVerification(String email)
         {
-            var sendEmail = await ApiClient.SendSubscriberVerification(email);
+            var sendEmail = await ApiClient.SendSubscriberVerificationAsync(email);
             Assert.That(sendEmail.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(sendEmail.Data, Is.Not.Null);
         }
@@ -125,11 +125,11 @@ namespace Staytus.Api.Tests.TestFixtures
         public async Task DeleteSubscriber(String email)
         {
             // assure email exists because you can run the call on emails that don't exist successfully
-            var getSub = await ApiClient.GetSubscriberByEmail(email);
+            var getSub = await ApiClient.GetSubscriberByEmailAsync(email);
             Assert.That(getSub.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(getSub.Data, Is.Not.Null);
             
-            var sendEmail = await ApiClient.DeleteSubscriber(email);
+            var sendEmail = await ApiClient.DeleteSubscriberAsync(email);
             Assert.That(sendEmail.Status, Is.EqualTo(SystemMessages.SUCCESS));
             Assert.That(sendEmail.Data, Has.Count.Positive);
         }

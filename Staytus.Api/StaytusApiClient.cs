@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -184,7 +185,8 @@ namespace Staytus.Api
         }
 
         protected async Task<StaytusResponseModel<TResponseData>> InternalSendAsync<TResponseData>(HttpRequestMessage httpRequest,
-            Func<String, StaytusResponseModel<TResponseData>> deserializeResponse = null)
+            Func<String, StaytusResponseModel<TResponseData>> deserializeResponse = null,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             if (deserializeResponse == null)
             {
@@ -204,7 +206,7 @@ namespace Staytus.Api
             httpRequest.Headers.Add("X-Auth-Secret", this.Secret);
 
             String responseStr = null;
-            using (var response = await this.HttpClient.SendAsync(httpRequest))
+            using (var response = await this.HttpClient.SendAsync(httpRequest, cancelToken))
             {
                 try
                 {
@@ -231,7 +233,8 @@ namespace Staytus.Api
         }
 
         protected async Task<StaytusResponseModel<TResponseData>> InternalGetAsync<TResponseData>(String servicePath,
-            IEnumerable<KeyValuePair<String, String>> parameters = null, Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null)
+            IEnumerable<KeyValuePair<String, String>> parameters = null, Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             if (!servicePath.StartsWith("/"))
             {
@@ -246,14 +249,16 @@ namespace Staytus.Api
             using (var httpReq = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri))
             {
                 return await InternalSendAsync(httpReq,
-                    (responseStr) => ParseResponse(responseStr, okParseResponse, null));
+                    (responseStr) => ParseResponse(responseStr, okParseResponse, null),
+                    cancelToken);
             }
         }
 
         protected async Task<StaytusResponseModel<TResponseData>> InternalPostAsync<TContentData, TResponseData>(String servicePath,
             TContentData data = default(TContentData),
             Func<TContentData, String> serializeContentData = null,
-            Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null)
+            Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             if (!servicePath.StartsWith("/"))
             {
@@ -270,14 +275,16 @@ namespace Staytus.Api
                 // if the ;charset is appended to content-type I noticed certain calls just failing (??)
                 httpReq.Content.Headers.ContentType.CharSet = null;
                 return await InternalSendAsync(httpReq,
-                    (responseStr) => ParseResponse(responseStr, okParseResponse, null));
+                    (responseStr) => ParseResponse(responseStr, okParseResponse, null),
+                    cancelToken);
             }
         }
 
         protected async Task<StaytusResponseModel<TResponseData>> InternalPutAsync<TContentData, TResponseData>(String servicePath,
             TContentData data = default(TContentData),
             Func<TContentData, String> serializeContentData = null,
-            Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null)
+            Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             if (!servicePath.StartsWith("/"))
             {
@@ -292,12 +299,14 @@ namespace Staytus.Api
             {
                 httpReq.Content = new StringContent(serializeContentData(data), Encoding.UTF8, "application/json");
                 return await InternalSendAsync(httpReq,
-                    (responseStr) => ParseResponse(responseStr, okParseResponse, null));
+                    (responseStr) => ParseResponse(responseStr, okParseResponse, null),
+                    cancelToken);
             }
         }
 
         protected async Task<StaytusResponseModel<TResponseData>> InternalDeleteAsync<TResponseData>(String servicePath,
-            IEnumerable<KeyValuePair<String, String>> parameters = null, Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null)
+            IEnumerable<KeyValuePair<String, String>> parameters = null, Func<String, JObject, StaytusResponseModel<TResponseData>> okParseResponse = null,
+            CancellationToken cancelToken = default(CancellationToken))
         {
             if (!servicePath.StartsWith("/"))
             {
@@ -312,7 +321,8 @@ namespace Staytus.Api
             using (var httpReq = new HttpRequestMessage(HttpMethod.Delete, uriBuilder.Uri))
             {
                 return await InternalSendAsync(httpReq,
-                    (responseStr) => ParseResponse(responseStr, okParseResponse, null));
+                    (responseStr) => ParseResponse(responseStr, okParseResponse, null),
+                    cancelToken);
             }
         }
     }
