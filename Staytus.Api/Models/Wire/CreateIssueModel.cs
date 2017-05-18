@@ -33,7 +33,7 @@ namespace Staytus.Api.Models.Wire
         }
 
         public CreateIssueModel(String title, List<String> servicePermalinks, String statusPermalink, StaytusState serviceState,
-            String initialUpdate = null,Nullable<Boolean> notify = null)
+            String initialUpdate = null, Nullable<Boolean> notify = null)
         {
             this.Title = title;
             this.ServicePermalinks = new List<String>(servicePermalinks);
