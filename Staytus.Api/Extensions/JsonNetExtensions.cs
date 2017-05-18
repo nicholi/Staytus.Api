@@ -60,5 +60,10 @@ namespace Staytus.Api.Extensions
         {
             return StaytusStateConverter.ToString(state);
         }
+
+        public static StaytusState FromWireValue(this String stateStr)
+        {
+            return StaytusStateConverter.FromString(stateStr);
+        }
     }
 }
