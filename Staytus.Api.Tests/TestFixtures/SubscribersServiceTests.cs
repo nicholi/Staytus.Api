@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace Staytus.Api.Tests.TestFixtures
 {
+    [TestFixture]
     public class SubscribersServiceTests : BaseServiceTests
     {
         private static readonly String USER1_EMAIL = "staytusUser1" + NextString(6) + "@influxis.com";
